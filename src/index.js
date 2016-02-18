@@ -5,6 +5,11 @@ class FriendlyMIDI extends EventEmitter {
   constructor() {
     super();
 
+    // If no MIDI access, don't expect events
+    if (!navigator.requestMIDIAccess) {
+      return;
+    }
+
     navigator.requestMIDIAccess().then(access => {
       this.access = access;
       access.onstatechange = this.handleAccessStateChange.bind(this);
