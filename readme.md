@@ -1,6 +1,6 @@
 ## Friendly-MIDI
 
-Simple wrapper around current web midi implementation.
+Simple wrapper around current web midi implementation. Handles connection/disconnection of devices seamlessly.
 
 ## Usage
 
