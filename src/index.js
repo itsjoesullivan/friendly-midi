@@ -19,8 +19,8 @@ class FriendlyMIDI extends EventEmitter {
       this.emit('error', error);
     });
   }
-  midiMessageHandler(event) {
-    this.emit(event.type, event.data, event);
+  midiMessageHandler(input, event) {
+    this.emit(event.type, event.data, event, input);
     var data = event.data;
     var status = data[0];
 
@@ -30,19 +30,19 @@ class FriendlyMIDI extends EventEmitter {
         frequency: noteNumberToFrequency(data[1]),
         noteNumber: data[1],
         velocity: data[2]
-      });
+      }, input);
     } else if (this.statusIsNoteOff(status)) {
       this.emit('noteOff', {
         note: noteNumberToName(data[1]),
         frequency: noteNumberToFrequency(data[1]),
         noteNumber: data[1],
         velocity: data[2]
-      });
+      }, input);
     } else if (this.statusIsPitchBend(status)) {
-      this.emit('pitchBend', data[2]);
+      this.emit('pitchBend', data[2], input);
     } else if (this.statusIsControlChange(status)) {
       if (this.controlChangeIsModulation(data[1])) {
-        this.emit('modulation', data[2]);
+        this.emit('modulation', data[2], input);
       }
     }
   }
@@ -65,7 +65,7 @@ class FriendlyMIDI extends EventEmitter {
     this.access.inputs.forEach(this.applyListenerToMIDIInput.bind(this));
   }
   applyListenerToMIDIInput(input) {
-    input.onmidimessage = this.midiMessageHandler.bind(this);
+    input.onmidimessage = this.midiMessageHandler.bind(this, input);
   }
   handleAccessStateChange(e) {
     this.emit('statechange', e);
